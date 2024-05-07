@@ -1,0 +1,45 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+<br>
+<h3>{{ product }}</h3>
+<br>
+<div class="row">
+    {% if records %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Пользователь</th>
+                <th>Дата выдачи</th>
+                <th>Дата возврата</th>
+                <th>Пояснения</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td><a href="{% url 'main:customer_records_list' pk=record.customer.pk %}">{{ record.customer.fio }}</a></td>
+                    <td>{{ record.set_date }}</td>
+                    <td>{% firstof record.unset_date "" %}</td>
+                    <td>{% firstof record.description "" %}</td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="{% url 'main:product_record_update' pk=record.pk pk_product=product.pk %}">
+                            Изменить
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    Нет записей
+    {% endif %}
+</div>
+<br>
+<div class="row">
+  <div class="col-2">
+      <a href="{% url 'main:product_record_add' pk=product.pk %}" class="btn btn-outline-danger">Добавить запись</a>
+  </div>
+</div>
+{% endblock %}

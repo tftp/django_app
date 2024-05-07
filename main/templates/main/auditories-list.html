@@ -1,0 +1,28 @@
+{%  extends 'main/base.html' %}
+
+{% block title %}
+Список кабинетов
+{% endblock %}
+
+{% block body %}
+<h1>Список кабинетов</h1>
+<br>
+<div>
+    <table class="table table-striped">
+        <tr>
+            <th>Кабинет</th>
+            <th>Оборудование</th>
+        </tr>
+        {% for auditory, value in auditories.items %}
+        <tr>
+            <td>
+            {{ auditory }}
+            </td>
+            <td>
+                <a class="btn btn-outline-primary" href="{% url 'main:auditory_products_list' %}?house_auditory={{ auditory }}">{{ value }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

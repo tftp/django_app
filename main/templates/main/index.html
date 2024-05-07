@@ -1,0 +1,14 @@
+{%  extends 'main/base.html' %}
+
+{% block title %}
+Главная
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col">
+            Добро пожаловать, {{ user.username }}! <a href="{% url 'main:logout' %}">logout</a>
+        </div>
+    </div>
+{% endblock %}
+

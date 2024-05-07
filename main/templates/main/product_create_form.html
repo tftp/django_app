@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+
+{% load django_bootstrap5 %}
+<br>
+<h3>Создание нового оборудования</h3>
+<div class="row">
+    <div class="col-5">
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% bootstrap_button button_type="submit" content="Создать" %}
+        </form>
+    </div>
+</div>
+<p>
+  <div><a href="{% url 'main:products_list' %}">Назад</a></div>
+</p>
+{% endblock %}

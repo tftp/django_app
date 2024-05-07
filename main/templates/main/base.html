@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+{% load static %}
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}" type="text/javascript"></script>
+
+{% load django_bootstrap5 %}
+</head>
+<body>
+{% block main_menu %}
+            <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top  border-bottom">
+                <div class="container-fluid">
+                    <ul class="nav justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:index' %}">Главная</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:customers_list' %}">Пользователи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:products_list' %}">Оборудование</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:auditories_list' %}">Кабинеты</a>
+                        </li>
+                    </ul>
+                </div>
+                <span class="navbar-text badge bg-light text-dark">
+                    {% if user.is_authenticated %}
+                        {{ user.username }}, <a href="{% url 'main:logout' %}">выход</a>
+                    {% else %}
+                        <a  href="{% url 'main:login' %}">Войти</a>
+                    {% endif %}
+                </span>
+            </nav>
+{% endblock %}
+<div class="container py-5 my-5">
+
+    {% if user.is_authenticated %}
+
+        <div class="row">
+            <div class="col">
+                {% block body %}
+                {% endblock %}
+            </div>
+        </div>
+
+    {% else %}
+
+    {% block login %}
+        <div class="row">
+            <div class="col">
+                Нужно авторизоваться, <a href="{% url 'main:login' %}">login</a>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% endif %}
+    <div class="row ">
+        <div class="col">
+            <footer class="fixed-bottom bg-light">
+                <div class="d-flex flex-column flex-sm-row justify-content-between py-2 my-0 border-top">
+                    <p>&copy; {% now "Y" %} АО "НПО ДР". All rights reserved.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'main/base.html' %}
+
+{% block body %}
+{% load django_bootstrap5 %}
+
+<br>
+<h3>Редактирование оборудования</h3>
+<div class="row">
+    <div class="col-5">
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% bootstrap_button button_type="submit" content="Исправить" %}
+        </form>
+    </div>
+</div>
+{% endblock %}

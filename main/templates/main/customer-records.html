@@ -1,0 +1,62 @@
+{% extends 'main/base.html' %}
+{% load django_bootstrap5 %}
+{% block body %}
+<br>
+<h3>{{ customer.fio }}</h3>
+<div class="row">
+  <div class="col-2">
+      <a class="badge bg-primary" href="{% url 'main:customer_download' pk=customer.pk %}">save as PDF</a>
+  </div>
+</div>
+<br>
+{% if customer.archived %} <p style="color:red">Уволен: {{ customer.stop_job }}</p> {% endif %}
+<p>Должность: {{ customer.position }}</p>
+<p>Телефон: {{ customer.telephone }}</p>
+<p>Местоположение: {{ customer.house_auditory }}</p>
+<div class="row">
+    {% if records %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Оборудование</th>
+                <th>Инв. номер</th>
+                <th>Дата выдачи</th>
+                <th>Дата возврата</th>
+                <th>Пояснения</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>
+                        <a href="{% url 'main:product_records_list' pk=record.product.pk %}">
+                            {{ record.product.name }}
+                        </a>
+                    </td>
+                    <td>{{ record.product.identity_number }}</td>
+                    <td>{{ record.set_date }}</td>
+                    <td>{% firstof record.unset_date "" %}</td>
+                    <td>{% firstof record.description "" %}</td>
+                    <td>
+                        <a class="btn btn-outline-primary" href="{% url 'main:customer_record_update' pk=record.pk pk_customer=customer.pk %}">
+                            Изменить
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    Нет записей
+    {% endif %}
+</div>
+{% if not customer.stop_job %}
+<br>
+<div class="row">
+  <div class="col-2">
+      <a class="btn btn-outline-danger" href="{% url 'main:customer_record_add' pk=customer.pk %}">Добавить запись</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

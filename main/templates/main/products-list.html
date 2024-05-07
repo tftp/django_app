@@ -1,0 +1,64 @@
+{%  extends 'main/base.html' %}
+
+{% block title %}
+Список Оборудования
+{% endblock %}
+
+{% block body %}
+<h1>Список оборудования</h1>
+<div>
+    <a href="{% url 'main:product_add' %}">
+        Добавить новое оборудование
+    </a>
+</div>
+<br>
+<div>
+    <form method="get">
+        <input type="text" name="name" placeholder="Поиск по номеру и наименованию">
+        <input type="submit" value="Найти">
+    </form>
+
+</div>
+<br>
+<div class="row">
+    <div class="col">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Наименование</th>
+                    <th>Инв. номер</th>
+                    <th>Примечание</th>
+                    <th>Текущий пользователь</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>
+                            {{ product.name_short }}
+                        </td>
+                        <td>{{ product.identity_number }}</td>
+                        <td>{{ product.description_short }}</td>
+                        {% if product.record_set.first.customer.fio %}
+                        <td>
+                        <a href="{% url 'main:customer_records_list' pk=product.record_set.first.customer.pk %}">
+                            {{ product.record_set.first.customer.fio }}
+                        </a>
+                        </td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                <a class="btn btn-outline-primary" href="{% url 'main:product_records_list' pk=product.pk %}">Use</a>
+                                <a class="btn btn-outline-primary" href="{% url 'main:product_update' pk=product.pk %}">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

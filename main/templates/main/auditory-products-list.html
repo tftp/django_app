@@ -1,0 +1,39 @@
+{%  extends 'main/base.html' %}
+
+{% block title %}
+Список Оборудования
+{% endblock %}
+
+{% block body %}
+<h1>Список оборудования в кабинете </h1>
+<br>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Кабинет</th>
+                <th>Инвентаризационный номер</th>
+                <th>Наименование</th>
+                <th>Пользователь</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                {% for record in customer.record_set.all %}
+                <tr>
+                    <td>{{ customer.house_auditory }}</td>
+                    <td>{{ record.product.identity_number }}</td>
+                    <td>
+                        <a href="{% url 'main:product_records_list' pk=record.product.pk %}">{{ record.product.name }}</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'main:customer_records_list' pk=customer.pk %}">{{ customer.fio }}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

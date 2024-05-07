@@ -1,0 +1,48 @@
+{%  extends 'main/base.html' %}
+
+{% block title %}
+Список пользователей
+{% endblock %}
+
+{% block body %}
+<h1>Список пользователей</h1>
+<div>
+    <a href="{% url 'main:customer_add' %}">
+        Добавить нового пользователя
+    </a>
+</div>
+<br>
+<div>
+    <form method="get" class="form">
+        <input type="text" name="name" placeholder="ФИО, телефон, аудитория">
+        <input type="submit" value="Найти">
+    </form>
+
+</div>
+<br>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Фамилия</th>
+                <th>Телефон</th>
+                <th>Кабинет</th>
+                <th>Оборудование</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr {% if customer.archived %} class="table-danger" {% endif %}>
+                    <td>{{ customer.fio }}</td>
+                    <td>{{ customer.telephone }}</td>
+                    <td><a href="{% url 'main:auditory_products_list' %}?house_auditory={{ customer.house_auditory }}">{{ customer.house_auditory }}</a></td>
+                    <td><a class="btn btn-outline-primary" href="{% url 'main:customer_records_list' pk=customer.pk %}">{{ customer.record_set.count }}</a></td>
+                    <td><a href="{% url 'main:customer_update' pk=customer.pk %}">Редактировать</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
