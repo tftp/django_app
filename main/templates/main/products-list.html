@@ -39,7 +39,30 @@
                             {{ product.name_short }}
                         </td>
                         <td>{{ product.identity_number }}</td>
-                        <td>{{ product.description_short }}</td>
+                        <td>
+                            {{ product.description_short }}
+
+                            {% if product.description|length > 28 %}
+                            <a href="" class="badge rounded-pill bg-primary" data-bs-toggle="modal" data-bs-target="#product{{ product.pk }}">></a>
+
+                            <div class="modal fade" id="product{{ product.pk }}" tabindex="-1" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">{{ product }}</h5>
+                                  </div>
+                                  <div class="modal-body">
+                                    {{ product.description }}
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {% endif %}
+
+                        </td>
                         {% if product.record_set.first.customer.fio %}
                         <td>
                         <a href="{% url 'main:customer_records_list' pk=product.record_set.first.customer.pk %}">
@@ -55,6 +78,7 @@
                                 <a class="btn btn-outline-primary" href="{% url 'main:product_update' pk=product.pk %}">Edit</a>
                             </div>
                         </td>
+
                     </tr>
                 {% endfor %}
             </tbody>

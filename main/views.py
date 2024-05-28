@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse, FileResponse
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.urls import reverse_lazy
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 from django.views import View
 from django.db.models import Prefetch, Q
@@ -207,6 +208,11 @@ class ProductUpdateView(UpdateView):
     )
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('main:products_list')
+
+class ProductDetailsView(DetailView):
+    template_name = "main/product-details.html"
+    model = Product
+    context_object_name = "product"
 
 class AuditoriesListView(ListView):
     template_name = "main/auditories-list.html"
