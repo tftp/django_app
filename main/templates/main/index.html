@@ -7,7 +7,8 @@
 {% block body %}
     <div class="row">
         <div class="col">
-            Добро пожаловать, {{ user.username }}! <a href="{% url 'main:logout' %}">logout</a>
+            <p>Добро пожаловать, {{ user.username }}! <a href="{% url 'main:logout' %}">logout</a></p>
+            <p>Вход в <a href="{% url 'admin:index' %}">админку</a></p>
         </div>
     </div>
 {% endblock %}
