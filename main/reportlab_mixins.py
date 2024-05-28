@@ -30,8 +30,9 @@ class PDFCreator():
         self.customer = get_object_or_404(Customer, pk=pk)
         records = self.customer.record_set.all()
 
+        filename = f"Карточка учета МЦ {self.customer.fio()}.pdf"
         buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=(self.PAGE_WIDTH, self.PAGE_HEIGHT))
+        doc = SimpleDocTemplate(buffer, pagesize=(self.PAGE_WIDTH, self.PAGE_HEIGHT), title=filename)
 
         Story = [Spacer(mm, mm*70)]
         style = self.styles["Normal"]
@@ -77,7 +78,7 @@ class PDFCreator():
 
         doc.build(Story, onFirstPage=self.myHeader)
         buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename="customer_records.pdf")
+        return FileResponse(buffer, as_attachment=True, filename=filename)
 
     def myHeader(self, canvas: canvas.Canvas, doc):
         canvas.saveState()
@@ -104,7 +105,7 @@ class PDFCreator():
 
         canvas.setFont("FreeSans", 8)
         canvas.drawString(50, self.PAGE_HEIGHT - 180, 'Фамилия, имя, отчество')
-        canvas.drawString(200, self.PAGE_HEIGHT - 180, self.customer.fio())
+        canvas.drawString(200, self.PAGE_HEIGHT - 180, f"{self.customer.fio()} (тел. {self.customer.telephone})")
         canvas.line(185, self.PAGE_HEIGHT - 183, 770, self.PAGE_HEIGHT - 183)
 
         canvas.drawString(50, self.PAGE_HEIGHT - 195, 'Должность')
