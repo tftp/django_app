@@ -42,7 +42,11 @@
                     <td>{{ record.product.identity_number }}</td>
                     <td>{{ record.set_date }}</td>
                     <td>{% firstof record.unset_date "" %}</td>
-                    <td>{% firstof record.description "" %}</td>
+                    <td>
+                        <span class="d-inline-block text-truncate" style="max-width: 250px;">
+                            {% firstof record.description "" %}
+                        </span>
+                    </td>
                     <td>
                         <a class="btn btn-outline-primary" href="{% url 'main:customer_record_update' pk=record.pk pk_customer=customer.pk %}">
                             Изменить

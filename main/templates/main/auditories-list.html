@@ -9,10 +9,12 @@
 <br>
 <div>
     <table class="table table-striped">
-        <tr>
-            <th>Кабинет</th>
-            <th>Оборудование</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Кабинет</th>
+                <th>Оборудование</th>
+            </tr>
+        </thead>
         {% for auditory, value in auditories.items %}
         <tr>
             <td>
