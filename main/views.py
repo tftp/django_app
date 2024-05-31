@@ -7,6 +7,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView, CreateView
 from django.views import View
 from django.db.models import Prefetch, Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.forms import CustomerRecordNewForm, RecordUpdateForm, ProductRecordNewForm
 from main.models import Customer, Record, Product
@@ -21,7 +23,9 @@ def index(request: HttpRequest):
     }
     return render(request, 'main/index.html', context=context)
 
-class CustomersListView(ListView):
+class CustomersListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = ''
     template_name = "main/customers-list.html"
     # paginate_by = 50
     context_object_name = "customers"
@@ -39,7 +43,8 @@ class CustomersListView(ListView):
         ))
         return queryset
 
-class CustomerRecordsListView(View):
+class CustomerRecordsListView(LoginRequiredMixin, View):
+    login_url = '/login/'
     def get(self, request: HttpRequest, pk: int) -> HttpResponse:
         customer = get_object_or_404(Customer, pk=pk)
         records = customer.record_set.all()
@@ -121,7 +126,9 @@ class CustomerUpdateView(UpdateView):
 
         return super().form_valid(form)
 
-class ProductsListView(ListView):
+class ProductsListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = ''
     template_name = "main/products-list.html"
     # paginate_by = 50
     context_object_name = "products"
@@ -133,7 +140,8 @@ class ProductsListView(ListView):
         )
         return queryset
 
-class ProductRecordsListView(View):
+class ProductRecordsListView(LoginRequiredMixin, View):
+    login_url = '/login/'
     def get(self, request: HttpRequest, pk: int) -> HttpResponse:
         product = get_object_or_404(Product, pk=pk)
         records = product.record_set.all()
@@ -176,7 +184,9 @@ class ProductRecordUpdateView(UpdateView):
             kwargs={"pk": self.object.product.pk},
         )
 
-class RecordDeleteView(DeleteView):
+class RecordDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = ''
     model = Record
     # success_url = reverse_lazy("main:customers_list")
     def get_success_url(self):
@@ -209,12 +219,15 @@ class ProductUpdateView(UpdateView):
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('main:products_list')
 
-class ProductDetailsView(DetailView):
+class ProductDetailsView(LoginRequiredMixin, DetailView):
+    login_url = '/login/'
     template_name = "main/product-details.html"
     model = Product
     context_object_name = "product"
 
-class AuditoriesListView(ListView):
+class AuditoriesListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = ''
     template_name = "main/auditories-list.html"
     context_object_name = "customers"
     queryset = Customer.objects.all().prefetch_related(
@@ -234,7 +247,8 @@ class AuditoriesListView(ListView):
         context['auditories'] = auditories
         return context
 
-class AuditoryProductsListView(ListView):
+class AuditoryProductsListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
     template_name = "main/auditory-products-list.html"
     context_object_name = "customers"
 
@@ -250,9 +264,7 @@ class AuditoryProductsListView(ListView):
         )
         return queryset
 
+@login_required(login_url='/login/')
 def customer_create_pdf(request: HttpRequest, pk: int):
-    if not request.user.is_authenticated:
-        return redirect(reverse('main:login'))
-
     pdf = PDFCreator()
     return pdf.create_for_customer(request, pk)
