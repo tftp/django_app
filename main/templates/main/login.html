@@ -2,13 +2,22 @@
 
 {% block login %}
 {% load django_bootstrap5 %}
-<div class="row">
-    <div class="col-4">
-        <form method="post" class="form">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            {% bootstrap_button button_type="submit" content="Войти" %}
-        </form>
+<div class="row justify-content-center">
+    <div class="col-5">
+        <div class="card">
+            <h5 class="card-header">
+                Программа учёта материальных ценностей
+            </h5>
+            <div class="card-body">
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    <div class="d-grid gap-2">
+                        {% bootstrap_button button_type="submit" content="Войти" %}
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
