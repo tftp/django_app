@@ -6,7 +6,7 @@ class ProductType(models.Model):
     name = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"Тип {self.name}"
+        return f"{self.name}"
 
 class Product(models.Model):
     name = models.CharField("Наименование", max_length=100)

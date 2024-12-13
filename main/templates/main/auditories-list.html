@@ -13,15 +13,23 @@
             <tr>
                 <th>Кабинет</th>
                 <th>Оборудование</th>
+                <th>Наполнение</th>
             </tr>
         </thead>
-        {% for auditory, value in auditories.items %}
+        {% for auditory, values in auditories.items %}
         <tr>
             <td>
-            {{ auditory }}
+                {{ auditory }}
             </td>
             <td>
-                <a class="btn btn-outline-primary" href="{% url 'main:auditory_products_list' %}?house_auditory={{ auditory }}">{{ value }}</a>
+                <a class="btn btn-outline-primary" href="{% url 'main:auditory_products_list' %}?house_auditory={{ auditory }}">{{ values|length }}</a>
+            </td>
+            <td width="50%">
+                {% if values|length < 25 %}
+                    {% for value in values %}
+                    <span class="badge bg-light text-dark">{{ value }}</span>
+                    {% endfor %}
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

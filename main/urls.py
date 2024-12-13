@@ -18,7 +18,9 @@ from .views import (
     ProductDetailsView,
     AuditoriesListView,
     AuditoryProductsListView,
+    VedomostProductsListView,
     customer_create_pdf,
+    vedomost_create_pdf,
 )
 
 app_name = "main"
@@ -44,4 +46,6 @@ urlpatterns = [
     path("auditories/", AuditoriesListView.as_view(), name="auditories_list"),
     path("auditories/products/", AuditoryProductsListView.as_view(), name="auditory_products_list"),
     path("customers/<int:pk>/records/download/", customer_create_pdf, name="customer_download"),
+    path("vedomost/", VedomostProductsListView.as_view(), name="vedomost_products_list"),
+    path("vedomost/download/", vedomost_create_pdf, name="vedomost_download"),
 ]

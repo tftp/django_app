@@ -1,8 +1,10 @@
 import io
 
+from django.db.models import Prefetch
 from django.http import FileResponse, HttpRequest
 from django.shortcuts import get_object_or_404
 from django.utils import dateformat
+from django.conf import settings
 
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -13,7 +15,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 
-from main.models import Customer
+from main.models import Customer, Product, Record
 
 
 class PDFCreator():
@@ -80,6 +82,57 @@ class PDFCreator():
         buffer.seek(0)
         return FileResponse(buffer, as_attachment=True, filename=filename)
 
+    def create_for_vedomost(self, request: HttpRequest, type: str) -> FileResponse:
+        records = Product.objects.filter(producttype__name__icontains=type).prefetch_related(
+            Prefetch('record_set', queryset=Record.objects.filter(unset_date=None).select_related("customer")),
+        )
+
+        filename = f"Ведомость.pdf"
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=(self.PAGE_HEIGHT, self.PAGE_WIDTH), title=filename)
+
+        Story = [Spacer(mm, mm)]
+        style = self.styles["Normal"]
+        style.fontSize = 6
+
+        data = []
+        head = [
+            Paragraph("Материальные ценности", style),
+            Paragraph("Инвентарный номер", style),
+            Paragraph("Текущий пользователь", style),
+            Paragraph("Тип", style),
+            Paragraph("Примечание", style),
+        ]
+        data.append(head)
+
+        style.fontSize = 8
+        for record in records:
+            row = []
+            row.append(Paragraph(record.name, style))
+            row.append(Paragraph(record.identity_number, style))
+            if record.record_set.first():
+                row.append(Paragraph(record.record_set.first().customer.fio(), style))
+                print(record.record_set.first().description)
+            else:
+                row.append('')
+            row.append(Paragraph(record.producttype.name, style))
+            if record.record_set.first() and record.record_set.first().description:
+                row.append(Paragraph(str(record.record_set.first().description), style))
+            else:
+                row.append(Paragraph(str(record.description), style))
+            data.append(row)
+
+        t = Table(data, colWidths=[mm*55,mm*20,mm*25,mm*25,mm*55])
+        t.setStyle(TableStyle([
+            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+        ]))
+        Story.append(t)
+
+        doc.build(Story, onFirstPage=self.vedomostHeader)
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=filename)
+
     def myHeader(self, canvas: canvas.Canvas, doc):
         canvas.saveState()
         canvas.setFont("FreeSans", 6)
@@ -88,7 +141,7 @@ class PDFCreator():
         canvas.drawRightString(770, self.PAGE_HEIGHT - 70, "Хранится у материально-ответственного лица подразделения")
 
         canvas.setFont("FreeSansBold", 8)
-        canvas.drawString(50, self.PAGE_HEIGHT - 80, 'АО "НПО ДР"')
+        canvas.drawString(50, self.PAGE_HEIGHT - 80, settings.ORGANIZATION)
 
         canvas.setFont("FreeSans", 8)
         canvas.drawString(50, self.PAGE_HEIGHT - 95, 'Структурное подразделение:')
@@ -120,3 +173,10 @@ class PDFCreator():
         canvas.line(185, self.PAGE_HEIGHT - 228, 770, self.PAGE_HEIGHT - 228)
 
         canvas.restoreState()
+
+    def vedomostHeader(self, canvas: canvas.Canvas, doc):
+        canvas.saveState()
+        canvas.setFont("FreeSans", 10)
+        canvas.drawCentredString(300, self.PAGE_WIDTH - 50, "ВЕДОМОСТЬ МАТЕРИАЛЬНЫХ ЦЕННОСТЕЙ")
+        canvas.restoreState()
+

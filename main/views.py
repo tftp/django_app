@@ -231,7 +231,7 @@ class AuditoriesListView(LoginRequiredMixin, ListView):
     template_name = "main/auditories-list.html"
     context_object_name = "customers"
     queryset = Customer.objects.all().prefetch_related(
-        Prefetch('record_set', queryset=Record.objects.filter(unset_date=None))
+        Prefetch('record_set', queryset=Record.objects.filter(unset_date=None).select_related("product"))
     )
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -239,9 +239,12 @@ class AuditoriesListView(LoginRequiredMixin, ListView):
         auditories = {}
         for customer in customers:
             if customer.house_auditory() in auditories:
-                auditories[customer.house_auditory()] += customer.record_set.count()
+                # auditories[customer.house_auditory()] += customer.record_set.count()
+                customer_auditories = [record.product.identity_number for record in customer.record_set.all()]
+                auditories[customer.house_auditory()] += customer_auditories
             elif customer.record_set.count() > 0:
-                auditories[customer.house_auditory()] = customer.record_set.count()
+                auditories[customer.house_auditory()] = [record.product.identity_number for record in customer.record_set.all()]
+                # auditories[customer.house_auditory()] = customer.record_set.count()
 
         auditories = dict(sorted(auditories.items()))
         context['auditories'] = auditories
@@ -264,7 +267,28 @@ class AuditoryProductsListView(LoginRequiredMixin, ListView):
         )
         return queryset
 
+class VedomostProductsListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = ''
+    template_name = "main/vedomost-products-list.html"
+    # paginate_by = 50
+    context_object_name = "products"
+
+    def get_queryset(self):
+        name = self.request.GET['name'] if "name" in self.request.GET else ""
+        queryset1 = Product.objects.filter(producttype__name__icontains=name).prefetch_related(
+            Prefetch('record_set', queryset=Record.objects.filter(unset_date=None).select_related("customer")),
+        )
+        queryset = queryset1.prefetch_related("producttype")
+        return queryset
+
 @login_required(login_url='/login/')
 def customer_create_pdf(request: HttpRequest, pk: int):
     pdf = PDFCreator()
     return pdf.create_for_customer(request, pk)
+
+@login_required(login_url='/login/')
+def vedomost_create_pdf(request: HttpRequest):
+    type = request.GET['type'] if "type" in request.GET else ""
+    pdf = PDFCreator()
+    return pdf.create_for_vedomost(request, type)
