@@ -9,7 +9,7 @@
 <h1>Формирование ведомости</h1>
 <div class="row">
   <div class="col-2">
-      <a class="badge bg-primary" href="{% url 'main:vedomost_download' %}?type={% get_type %}">save as PDF</a>
+      <a id="pdf" class="badge bg-primary" href="{% url 'main:vedomost_download' %}?type={% get_type %}">save as PDF</a>
   </div>
 </div>
 <br>
@@ -20,6 +20,8 @@
         <input type="submit" value="Фильтр по типу">
     </form>
 </div>
+<br>
+<div id="prt"></div>
 
 <br>
 <div class="row">
@@ -73,7 +75,7 @@
                         <td></td>
                         {% endif %}
                         <td>
-                            <div class="producttype id{{ product.producttype.id }}">
+                            <div class="producttype" data-id="{{ product.producttype.id }}">
                                 {{ product.producttype }}
                             </div>
                         </td>
@@ -81,10 +83,15 @@
                     </tr>
                 {% endfor %}
             <tr>
-                <td colspan="5" align="right">Итого: {{ products|length }}</td>
+                <td colspan="5" align="right" id="total">Итого: {{ products|length }}</td>
             </tr>
             </tbody>
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block footer %}
+{% load static %}
+<script src="{% static 'js/product_type.js' %}" type="text/javascript"></script>
 {% endblock %}
