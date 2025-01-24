@@ -202,6 +202,7 @@ class ProductCreateView(CreateView):
         "description",
         "identity_number",
         "price",
+        "register_year",
         "producttype",
     )
     template_name_suffix = '_create_form'
@@ -214,6 +215,7 @@ class ProductUpdateView(UpdateView):
         "description",
         "identity_number",
         "price",
+        "register_year",
         "producttype",
     )
     template_name_suffix = '_update_form'
