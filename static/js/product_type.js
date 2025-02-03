@@ -30,7 +30,7 @@ function toggle(event) {
     let typeId = elem.dataset.id;
     pdf.href = `download/?type=${elem.innerText}`;
     for (let i=0; i<elPrts["length"];++i) {
-        if (elPrts[i].dataset.id == typeId) {
+        if (elPrts[i].dataset.id == typeId and ) {
             elPrts[i].parentNode.parentNode.hidden = false;
         } else {
             elPrts[i].parentNode.parentNode.hidden = true;

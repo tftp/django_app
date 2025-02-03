@@ -20,8 +20,8 @@
 </div>
 <br>
 <div class="form-check form-switch">
-  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-  <label class="form-check-label" for="flexSwitchCheckDefault">Скрывать уволенных сотрудников</label>
+  <input class="form-check-input" type="checkbox" id="archivedSwitchCheck">
+  <label class="form-check-label" for="archivedSwitchCheck">Скрывать уволенных сотрудников</label>
 </div>
 <br>
 <div>
@@ -53,5 +53,5 @@
 
 {% block footer %}
 {% load static %}
-<script src="{% static 'js/customers.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/archived_hidden.js' %}" type="text/javascript"></script>
 {% endblock %}

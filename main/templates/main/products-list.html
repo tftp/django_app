@@ -17,7 +17,11 @@
         <input type="text" name="name" placeholder="Поиск по номеру и наименованию">
         <input type="submit" value="Найти">
     </form>
-
+</div>
+<br>
+<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" id="archivedSwitchCheck">
+  <label class="form-check-label" for="archivedSwitchCheck">Скрывать списанное оборудование</label>
 </div>
 <br>
 <div class="row">
@@ -34,7 +38,7 @@
             </thead>
             <tbody>
                 {% for product in products %}
-                    <tr>
+                    <tr {% if product.archived %} class="table-danger" {% endif %}>
                         <td>
                             {{ product.name_short }}
                         </td>
@@ -85,4 +89,9 @@
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block footer %}
+{% load static %}
+<script src="{% static 'js/archived_hidden.js' %}" type="text/javascript"></script>
 {% endblock %}

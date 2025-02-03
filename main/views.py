@@ -202,7 +202,7 @@ class ProductCreateView(CreateView):
         "description",
         "identity_number",
         "price",
-        "register_year",
+        "start_job",
         "producttype",
     )
     template_name_suffix = '_create_form'
@@ -215,11 +215,20 @@ class ProductUpdateView(UpdateView):
         "description",
         "identity_number",
         "price",
-        "register_year",
+        "start_job",
+        "stop_job",
         "producttype",
     )
     template_name_suffix = '_update_form'
     success_url = reverse_lazy('main:products_list')
+
+    def form_valid(self, form):
+        if form.instance.stop_job:
+            form.instance.archived = True
+        else:
+            form.instance.archived = False
+
+        return super().form_valid(form)
 
 class ProductDetailsView(LoginRequiredMixin, DetailView):
     login_url = '/login/'
@@ -278,7 +287,7 @@ class VedomostProductsListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         name = self.request.GET['name'] if "name" in self.request.GET else ""
-        queryset1 = Product.objects.filter(producttype__name__icontains=name).prefetch_related(
+        queryset1 = Product.objects.filter(producttype__name__icontains=name, archived__exact=0).prefetch_related(
             Prefetch('record_set', queryset=Record.objects.filter(unset_date=None).select_related("customer")),
         )
         queryset = queryset1.prefetch_related("producttype")

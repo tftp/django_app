@@ -83,7 +83,7 @@ class PDFCreator():
         return FileResponse(buffer, as_attachment=True, filename=filename)
 
     def create_for_vedomost(self, request: HttpRequest, type: str) -> FileResponse:
-        records = Product.objects.filter(producttype__name__icontains=type).prefetch_related(
+        records = Product.objects.filter(producttype__name__icontains=type, archived__exact=0).prefetch_related(
             Prefetch('record_set', queryset=Record.objects.filter(unset_date=None).select_related("customer")),
         )
 

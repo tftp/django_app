@@ -16,7 +16,8 @@ class Product(models.Model):
     archived = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     producttype = models.ForeignKey(ProductType, on_delete=models.PROTECT)
-    register_year = models.CharField ("Год постановки на учет", max_length=4, blank=True)
+    start_job = models.DateField('Поступление', null=True, blank=True)
+    stop_job = models.DateField('Списание', null=True, blank=True)
 
     def __str__(self):
         return f"{self.identity_number}--{self.name}"
